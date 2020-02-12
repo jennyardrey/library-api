@@ -35,6 +35,7 @@ describe('/users', () => {
         })
         .then(res => {
           expect(res.status).toBe(200);
+          expect(res.body).not.toHaveProperty('password');
           User.findById(res.body._id, (_, user) => {
             expect(user.firstName).toBe('Jenny');
             expect(user.lastName).toBe('Ardrey');

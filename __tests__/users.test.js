@@ -31,7 +31,7 @@ describe('/users', () => {
           firstName: 'Jenny',
           lastName: 'Ardrey',
           email: 'jenny@ardrey.co.uk',
-          password: '12345',
+          password: '12345678',
         })
         .then(res => {
           expect(res.status).toBe(200);
@@ -46,5 +46,32 @@ describe('/users', () => {
         });
       // done ();
     });
+  });
+  it('validates the password and email', done => {
+    let docs;
+    request(app)
+      .post('/users')
+      .send({
+        firstName: 'Jenny',
+        lastName: 'Ardrey',
+        email: 'jennyardrey.co.uk',
+        password: '12345',
+      })
+      .then(
+        User.countDocuments({}, count => {
+          if (count > 0) {
+            docs = 'more than 0';
+          } else {
+            docs = 0;
+          }
+        }),
+      )
+      .then(res => {
+        expect(res.body.errors.password).toBe('Your password must be at least 8 characters long');
+        expect(res.body.errors.email).toBe('Invalid email address');
+        // console.log(docs);
+        // expect(docs).toBe(0);
+        done();
+      });
   });
 });

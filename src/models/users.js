@@ -1,14 +1,21 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const _ = require('lodash');
+const isEmail = require('isemail');
 
 const saltRounds = 10;
 
 const userSchema = new mongoose.Schema({
   firstName: String,
   lastName: String,
-  email: String,
-  password: String,
+  email: {
+    type: String,
+    validate: [isEmail.validate, 'Invalid email address'],
+  },
+  password: {
+    type: String,
+    minlength: 8,
+  },
 });
 
 userSchema.pre('save', function encryptPassword(next) {

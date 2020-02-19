@@ -1,4 +1,6 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/users');
+/* eslint no-underscore-dangle: 0 */
 
 exports.create = (req, res) => {
   const user = new User({
@@ -28,4 +30,19 @@ exports.create = (req, res) => {
         res.sendStatus(500);
       }
     });
+};
+
+exports.login = (req, res) => {
+  // console.log(req.body.email);
+  User.findOne({ email: req.body.email }).then(user => {
+    if (!user === null) {
+      const payload = {
+        name: user.name,
+        id: user._id,
+      };
+      jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1w' }, () => {});
+    } else {
+      res.sendStatus(404);
+    }
+  });
 };

@@ -1,29 +1,9 @@
-const mongoose = require('mongoose');
 const app = require('../src/app');
 const User = require('../src/models/users');
 const UserHelpers = require('../tests/helpers/user-helpers');
 const DataFactory = require('../tests/helpers/data-factory');
 
 describe('/users', () => {
-  beforeAll(done => {
-    const url = process.env.DATABASE_CONN;
-    mongoose.connect(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    done();
-  });
-  afterEach(done => {
-    User.deleteMany({}, () => {
-      done();
-    });
-  });
-
-  afterAll(done => {
-    mongoose.connection.close();
-    done();
-  });
-
   describe('POST /users', () => {
     it('creates a new user in the database', done => {
       const data = DataFactory.user();
@@ -38,7 +18,7 @@ describe('/users', () => {
           done();
         });
       });
-      // done ();
+      done();
     });
   });
   it('validates the password', done => {
@@ -51,7 +31,6 @@ describe('/users', () => {
   it('validates the email', done => {
     const data = DataFactory.user({ email: 'jennardreycouk' });
     UserHelpers.signUp(app, data).then(res => {
-      console.log(res.body.errors);
       expect(res.body.errors.email).toBe('Invalid email address');
       done();
     });
@@ -65,7 +44,8 @@ describe('/users', () => {
     } else {
       const docs = 0;
     }
+    expect(docs).toBe(0);
   }),
         // console.log(docs);
-      // expect(docs).toBe(0);
+      // 
 ) */
